@@ -1,0 +1,22 @@
+package components
+
+templ Index() {
+	@Layout(main())
+}
+
+templ main() {
+	<script>
+  function breh() {
+    return {
+      value: 0,
+      increase() {
+        this.value += 1
+      }
+    }
+  }
+</script>
+	<main x-data="breh">
+		<h1 x-text="value"></h1>
+		<button @click="increase">asd</button>
+	</main>
+}
