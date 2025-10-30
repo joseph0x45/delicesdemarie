@@ -1,13 +1,12 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"flag"
 	"log"
 	"net/http"
-	"shop/components"
 	"shop/db"
+	"shop/handlers"
 )
 
 //go:embed static/*
@@ -30,11 +29,9 @@ func main() {
 	if err := conn.Seed(); err != nil {
 		panic(err)
 	}
+	handler := handlers.NewHandler(conn)
 
-	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.Background()
-		components.Index().Render(ctx, w)
-	})
+	mux.HandleFunc("GET /", handler.RenderShopPage)
 	mux.HandleFunc("GET /static/", http.FileServer(http.FS(static)).ServeHTTP)
 
 	server := http.Server{

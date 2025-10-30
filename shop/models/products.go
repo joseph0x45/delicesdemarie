@@ -8,4 +8,5 @@ type Product struct {
 	Picture     string `json:"picture" db:"picture"`
 	Description string `json:"description" db:"description"`
 	Available   bool   `json:"available" db:"available"`
+	Brand       string `json:"brand" db:"brand"`
 }

@@ -1,22 +1,27 @@
 package components
 
-templ Index() {
-	@Layout(main())
+import "shop/models"
+
+templ Index(products []models.Product) {
+	@Layout(main(products))
 }
 
-templ main() {
+templ main(products []models.Product) {
 	<script>
-  function breh() {
+  function handler() {
     return {
-      value: 0,
-      increase() {
-        this.value += 1
-      }
     }
   }
 </script>
-	<main x-data="breh">
-		<h1 x-text="value"></h1>
-		<button @click="increase">asd</button>
+	<main x-data="handler">
+		for _, product := range products {
+			<h1>{ product.ID }</h1>
+			<h1>{ product.Label }</h1>
+			<h1>{ product.Variant }</h1>
+			<h1>{ product.Picture }</h1>
+			<h1>{ product.Price }</h1>
+			<h1>{ product.Brand }</h1>
+			<h1>{ product.Available }</h1>
+		}
 	</main>
 }
