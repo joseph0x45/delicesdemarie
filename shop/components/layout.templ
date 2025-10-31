@@ -9,6 +9,20 @@ templ Layout(children ...templ.Component) {
 			<title>Les Delices de Marie | Boutique en ligne</title>
 			<link href="/static/styles.css" rel="stylesheet"/>
 			<script defer src="/static/alpine.js"></script>
+			<script src="/static/script.js"></script>
+			<style>
+    @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap");
+
+    body {
+      font-family: "Inter", sans-serif;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Playfair Display", serif;
+    }
+  </style>
 		</head>
 		<body>
 			for _, child := range children {

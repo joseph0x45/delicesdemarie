@@ -6,16 +6,388 @@ templ Index(products []models.Product) {
 	@Layout(main(products))
 }
 
+var filtersList = []string{
+	"Toutes",
+	"Epices Douces",
+	"Epices piquantes",
+	"Melanges",
+	"Herbes",
+}
+
+templ filters() {
+	<div class="flex flex-wrap justify-center gap-3 mb-12">
+		for _, filter := range filtersList {
+			<button
+				onclick="filterProducts('tous')"
+				class="filter-btn px-6 py-2 rounded-full bg-amber-600 text-white font-medium transition hover:bg-amber-700"
+				data-category="tous"
+			>
+				{ filter }
+			</button>
+		}
+	</div>
+}
+
+templ footer() {
+	<footer class="bg-stone-800 text-white py-8">
+		<div class="container mx-auto px-6">
+			<div class="text-center">
+				<p class="text-stone-300">
+					&copy; 2024 Délices d'Épices. Tous droits réservés.
+				</p>
+				<p class="text-stone-400 text-sm mt-2">
+					Épices de qualité premium depuis 1995
+				</p>
+			</div>
+		</div>
+	</footer>
+}
+
+templ heroSection() {
+	<section id="accueil" class="bg-gradient-to-br from-amber-50 to-orange-50 py-20">
+		<div class="container mx-auto px-6">
+			<div class="max-w-3xl mx-auto text-center">
+				<h2 class="text-5xl font-bold text-stone-800 mb-6">
+					Découvrez l'Art des Délices de Marie
+				</h2>
+				<p class="text-xl text-stone-600 mb-8">
+					Des épices premium sélectionnées avec soin pour sublimer vos plats
+					et éveiller vos sens
+				</p>
+				<a
+					href="#produits"
+					class="inline-block bg-amber-600 text-white px-8 py-3 rounded-lg hover:bg-amber-700 transition font-medium"
+				>
+					Découvrir nos produits
+				</a>
+			</div>
+		</div>
+	</section>
+}
+
+templ productsList() {
+	<div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+		for _ = range 10 {
+			@product()
+		}
+	</div>
+}
+
+templ product() {
+	<div
+		class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition duration-300 product-card"
+		data-category="${product.category}"
+	>
+		<div class="aspect-square overflow-hidden bg-stone-100">
+			<img
+				src="https://picsum.photos/200/300"
+				alt="${product.name}"
+				class="w-full h-full object-cover hover:scale-110 transition duration-500"
+			/>
+		</div>
+		<div class="p-6">
+			<a href="details.html?id=${products.indexOf(product)}">
+				<h3 class="text-xl font-semibold text-stone-800 mb-2">Name</h3>
+			</a>
+			<p class="text-stone-600 text-sm mb-4">Description</p>
+			<div class="flex items-center justify-between mb-4">
+				<span class="text-2xl font-bold text-amber-600">50</span>
+				<span class="text-xs text-stone-500 uppercase tracking-wide">Label</span>
+			</div>
+			<div class="flex gap-2">
+				<a
+					class="flex-1 text-center px-4 py-2 border border-amber-600 text-amber-600 rounded-lg hover:bg-amber-50 transition font-medium"
+				>
+					Détails
+				</a>
+				<button class="flex-1 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition font-medium">
+					Ajouter
+				</button>
+			</div>
+		</div>
+	</div>
+}
+
+templ cartModal(empty bool) {
+	<div
+		x-show="cart_toggled"
+		id="cart-modal"
+		class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+	>
+		<div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+			<div class="sticky top-0 bg-white border-b border-stone-200 p-6 flex justify-between items-center">
+				<h2 class="text-2xl font-bold text-stone-800">Mon Panier</h2>
+				<button @click="toggleCart()" class="p-2 hover:bg-stone-100 rounded-lg transition">
+					<svg class="w-6 h-6 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+			<div x-show="cart_toggled" id="cart-items" class="p-6">
+				@cartItem()
+				@cartItem()
+				@cartItem()
+				@cartItem()
+				@cartItem()
+				@cartItem()
+				<div class="space-y-4">
+					<div class="mt-6 pt-6 border-t border-stone-200">
+						<div class="flex justify-between items-center text-xl font-bold">
+							<span class="text-stone-800">Total</span>
+							<span class="text-amber-600">total </span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="cart-form-section" class=" border-t border-stone-200 p-6 bg-stone-50">
+				<h3 class="text-xl font-semibold text-stone-800 mb-4">
+					Informations de livraison
+				</h3>
+				<form id="order-form" class="space-y-4">
+					<div>
+						<label class="block text-sm font-medium text-stone-700 mb-2">Nom complet *</label>
+						<input
+							type="text"
+							id="fullname"
+							required
+							class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-transparent"
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-stone-700 mb-2">Numéro de téléphone *</label>
+						<input
+							type="tel"
+							id="phone"
+							required
+							class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-transparent"
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-stone-700 mb-2">Adresse complète *</label>
+						<textarea
+							id="address"
+							required
+							rows="3"
+							class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-transparent"
+						></textarea>
+					</div>
+					<button
+						type="submit"
+						class="w-full bg-amber-600 text-white py-3 rounded-lg hover:bg-amber-700 transition font-semibold"
+					>
+						Valider la commande
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+}
+
+templ cartItem() {
+	<div class="flex gap-4 bg-stone-50 p-4 rounded-lg">
+		<img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded"/>
+		<div class="flex-1">
+			<h3 class="font-semibold text-stone-800">item.name</h3>
+			<p class="text-amber-600 font-bold">item.price</p>
+			<div class="flex items-center gap-3 mt-2">
+				<button
+					onclick=""
+					class="w-8 h-8 flex items-center justify-center bg-white border border-stone-300 rounded hover:bg-stone-100"
+				>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+					</svg>
+				</button>
+				<span class="font-medium">item.quantity</span>
+				<button
+					onclick=""
+					class="w-8 h-8 flex items-center justify-center bg-white border border-stone-300 rounded hover:bg-stone-100"
+				>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+					</svg>
+				</button>
+			</div>
+		</div>
+		<button onclick="" class="text-red-600 hover:text-red-700">
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+				></path>
+			</svg>
+		</button>
+	</div>
+}
+
+templ cartModal2(empty bool) {
+	<div class="text-center py-12">
+		<svg class="w-24 h-24 mx-auto text-stone-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+			></path>
+		</svg>
+		<p class="text-stone-600 text-lg">Votre panier est vide</p>
+	</div>
+}
+
+templ header() {
+	<header class="bg-white shadow-sm sticky top-0 z-50">
+		<nav class="container mx-auto px-6 py-4">
+			<div class="flex items-center justify-between">
+				<div class="flex items-center space-x-2">
+					<svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+						></path>
+					</svg>
+					<h1 class="text-2xl font-bold text-stone-800">Délices de Marie</h1>
+				</div>
+				<div class="flex items-center space-x-8">
+					<div class="hidden md:flex space-x-8">
+						<a href="#accueil" class="text-stone-600 hover:text-amber-600 transition">Accueil</a>
+						<a href="#produits" class="text-stone-600 hover:text-amber-600 transition">Produits</a>
+						<a href="#contact" class="text-stone-600 hover:text-amber-600 transition">Contact</a>
+					</div>
+					<button @click="toggleCart()" class="relative p-2 hover:bg-stone-100 rounded-lg transition">
+						<svg class="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+							></path>
+						</svg>
+						<span
+							id="cart-count"
+							class="absolute -top-1 -right-1 bg-amber-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center hidden"
+							x-text="cart_count"
+						></span>
+					</button>
+				</div>
+			</div>
+		</nav>
+	</header>
+}
+
 templ main(products []models.Product) {
-	<script>
-  function handler() {
-    return {
-      cart: [],
-      addToCart(id) { },
-      removeFromCart(id) { },
-      saveOrder() { }
-    }
-  }
-</script>
-	<main x-data="handler"></main>
+	<body x-data="handler()" class="bg-stone-50">
+		@header()
+		@heroSection()
+		<!-- Products Section -->
+		<section id="produits" class="py-16">
+			<div class="container mx-auto px-6">
+				<h2 class="text-4xl font-bold text-center text-stone-800 mb-12">
+					Nos Épices
+				</h2>
+				@filters()
+				@productsList()
+			</div>
+		</section>
+		@contact()
+		@footer()
+		@cartModal(true)
+	</body>
+}
+
+templ contact() {
+	<section id="contact" class="bg-stone-100 py-16">
+		<div class="container mx-auto px-6">
+			<div class="max-w-4xl mx-auto">
+				<h2 class="text-4xl font-bold text-center text-stone-800 mb-12">
+					Contactez-nous
+				</h2>
+				<div class="grid md:grid-cols-2 gap-8">
+					<div class="bg-white p-8 rounded-lg shadow-sm">
+						<h3 class="text-xl font-semibold mb-4 text-stone-800">
+							Informations
+						</h3>
+						<div class="space-y-4">
+							<div class="flex items-start space-x-3">
+								<svg
+									class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+									></path>
+								</svg>
+								<span class="text-stone-600">contact@delices-epices.fr</span>
+							</div>
+							<div class="flex items-start space-x-3">
+								<svg
+									class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+									></path>
+								</svg>
+								<span class="text-stone-600">+33 1 23 45 67 89</span>
+							</div>
+							<div class="flex items-start space-x-3">
+								<svg
+									class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+									></path>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+									></path>
+								</svg>
+								<span class="text-stone-600">123 Rue des Épices<br/>75001 Paris, France</span>
+							</div>
+						</div>
+					</div>
+					<div class="bg-white p-8 rounded-lg shadow-sm">
+						<h3 class="text-xl font-semibold mb-4 text-stone-800">
+							Horaires
+						</h3>
+						<div class="space-y-3 text-stone-600">
+							<div class="flex justify-between">
+								<span>Lundi - Vendredi</span>
+								<span class="font-medium">9h - 19h</span>
+							</div>
+							<div class="flex justify-between">
+								<span>Samedi</span>
+								<span class="font-medium">10h - 18h</span>
+							</div>
+							<div class="flex justify-between">
+								<span>Dimanche</span>
+								<span class="font-medium">Fermé</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 }
