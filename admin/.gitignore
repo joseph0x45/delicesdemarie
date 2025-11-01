@@ -3,3 +3,4 @@ admin
 admin.db
 static/alpine.js
 static/styles.css
+static/toastify.*

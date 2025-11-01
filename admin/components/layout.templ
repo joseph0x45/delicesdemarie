@@ -8,7 +8,11 @@ templ Layout(children ...templ.Component) {
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>PasteBin</title>
     <link href="/static/styles.css" rel="stylesheet"/>
+    <link href="/static/toastify.css" rel="stylesheet"/>
     <script defer src="/static/alpine.js"></script>
+    <script src="/static/script.js"></script>
+    <script src="/static/toastify.js"></script>
+    <script src="/static/utils.js"></script>
   </head>
   <body>
     for _, child := range children {

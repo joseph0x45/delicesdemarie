@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"admin/components"
 	"admin/db"
 	"admin/utils"
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -24,7 +26,12 @@ type payloadStruct struct {
 	Password string `json:"password"`
 }
 
-func (h *AuthHandler) RenderAuthPage(w http.ResponseWriter, r *http.Request) {}
+func (h *AuthHandler) RenderAuthPage(w http.ResponseWriter, r *http.Request) {
+	if err := components.Auth().Render(context.Background(), w); err != nil {
+		log.Println("[ERROR]: Error rendering auth page:", err.Error())
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+	}
+}
 
 func (h *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	payload := &payloadStruct{}
@@ -65,5 +72,5 @@ func (h *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(10 * 365 * 24 * time.Hour),
 	}
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, "/home", http.StatusSeeOther)
+	w.WriteHeader(http.StatusOK)
 }

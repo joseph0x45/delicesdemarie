@@ -1,11 +1,12 @@
 package main
+
 import (
-  "context"
-  "admin/components"
-  "embed"
-  "flag"
-  "log"
-  "net/http"
+	"admin/db"
+	"admin/handlers"
+	"embed"
+	"flag"
+	"log"
+	"net/http"
 )
 
 //go:embed static/*
@@ -13,25 +14,33 @@ var static embed.FS
 
 //go:generate tailwindcss -i static/input.css -o static/styles.css -m
 
-func main(){
-  port := flag.String("port", "8080", "The port to start admin on")
-  flag.Parse()
-  mux := http.NewServeMux()
+func main() {
+	port := flag.String("port", "8080", "The port to start admin on")
+	dbPath := flag.String("db", "admin.db", "The SQLite database file")
+	newDB := flag.Bool("new-db", false, "Start with a fresh database")
+	flag.Parse()
+	conn, err := db.NewConn(*dbPath, *newDB)
+	if err != nil {
+		panic(err)
+	}
+	authHandler := handlers.NewAuthHandler(conn)
+	mux := http.NewServeMux()
 
-  mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-    ctx := context.Background()
-    components.Index().Render(ctx, w)
-  })
-  mux.HandleFunc("GET /static/", http.FileServer(http.FS(static)).ServeHTTP)
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("you're in muah"))
+	})
+	mux.HandleFunc("GET /auth", authHandler.RenderAuthPage)
 
-  
-  server := http.Server{
-    Addr: ":"+ *port,
-    Handler: mux,
-  }
-  log.Printf("admin launched on port %s\n", *port)
-  if err := server.ListenAndServe(); err!= nil {
-    panic(err)
-  }
+	mux.HandleFunc("POST /api/auth", authHandler.HandleLogin)
+
+	mux.HandleFunc("GET /static/", http.FileServer(http.FS(static)).ServeHTTP)
+
+	server := http.Server{
+		Addr:    ":" + *port,
+		Handler: mux,
+	}
+	log.Printf("App launched on  http://0.0.0.0:%s\n", *port)
+	if err := server.ListenAndServe(); err != nil {
+		panic(err)
+	}
 }
-

@@ -15,8 +15,13 @@ import (
 const dbSchema = `
   create table if not exists users (
     id integer not null primary key autoincrement,
-    username text not null,
+    username text not null unique,
     password text not null
+  );
+
+  insert or ignore into users (username, password)
+  values (
+    'admin', '$2a$12$zRjZjn3jP1RhIBPIePwQv.n5EH0CZlczVe92BdOPsiQ/RAk7M1pMC'
   );
 
   create table if not exists sessions (
