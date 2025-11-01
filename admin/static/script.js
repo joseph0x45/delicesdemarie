@@ -29,6 +29,7 @@ function auth() {
           return
         }
         toast_success("Redirecting to dashboard")
+        window.location.href = "/"
       } catch (error) {
         this.loading = false
         toast_error("Failed to authenticate. Check logs")

@@ -3,6 +3,7 @@ package main
 import (
 	"admin/db"
 	"admin/handlers"
+	"admin/middleware"
 	"embed"
 	"flag"
 	"log"
@@ -24,11 +25,11 @@ func main() {
 		panic(err)
 	}
 	authHandler := handlers.NewAuthHandler(conn)
+	authMiddleware := middleware.NewAuthMiddleware(conn)
+	mainHandler := handlers.NewMainHandler(conn)
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("you're in muah"))
-	})
+	mux.Handle("GET /", authMiddleware.CookieAuth(http.HandlerFunc(mainHandler.RenderDashboard)))
 	mux.HandleFunc("GET /auth", authHandler.RenderAuthPage)
 
 	mux.HandleFunc("POST /api/auth", authHandler.HandleLogin)
