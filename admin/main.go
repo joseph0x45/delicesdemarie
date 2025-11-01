@@ -29,7 +29,7 @@ func main() {
 	mainHandler := handlers.NewMainHandler(conn)
 	mux := http.NewServeMux()
 
-	mux.Handle("GET /", authMiddleware.CookieAuth(http.HandlerFunc(mainHandler.RenderDashboard)))
+	mux.Handle("GET /", authMiddleware.CookieAuth(http.HandlerFunc(mainHandler.RenderDashboardHome)))
 	mux.HandleFunc("GET /auth", authHandler.RenderAuthPage)
 
 	mux.HandleFunc("POST /api/auth", authHandler.HandleLogin)

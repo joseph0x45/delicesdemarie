@@ -38,3 +38,11 @@ function auth() {
     }
   }
 }
+
+function app() {
+  return {
+    get isSelected() {
+      return window.location.pathname == ""
+    }
+  }
+}

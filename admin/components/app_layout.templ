@@ -8,22 +8,27 @@ type sideBarItem struct {
 	Icon  func() templ.Component
 }
 
-var sideBarItems = []sideBarItem{
-	{
+var sideBarItemsData = map[string]sideBarItem{
+	"/": {
+		Label: "Home",
+		Icon:  icons.Home,
+	},
+	"/products": {
 		Label: "Products",
-		Link:  "/products",
-		Icon:  icons.ProductIcon,
+		Icon:  icons.Product,
 	},
-	{
+	"/orders": {
 		Label: "Orders",
-		Link:  "/orders",
-		Icon:  icons.OrderIcon,
+		Icon:  icons.Order,
 	},
-	{
+	"/profile": {
 		Label: "Profile",
-		Link:  "/profile",
-		Icon:  icons.ProfileIcon,
+		Icon:  icons.Profile,
 	},
+}
+
+func isCurrentPage(link, currentPath string) bool {
+	return link == currentPath
 }
 
 templ sideBarFooter() {
@@ -47,19 +52,21 @@ templ sideBarFooter() {
 	</div>
 }
 
-templ sideBar() {
+templ sideBar(currentPage string) {
 	<aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
 		<div class="px-6 py-4 border-b border-gray-200">
 			<h2 class="text-2xl font-bold text-gray-900">Admin Panel</h2>
 		</div>
 		<nav class="flex-1 p-4 space-y-1">
-			for _, sideBarItem := range sideBarItems {
+			for path, sideBarItem := range sideBarItemsData {
 				<a
-					href={ sideBarItem.Link }
-					class="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition"
+					href={ path }
+					class={ "flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition" ,
+      templ.KV("bg-gray-100", isCurrentPage(currentPage, path)) }
 				>
 					@sideBarItem.Icon()
 					<span class="font-medium">{ sideBarItem.Label }</span>
+					<h1 x-text="isSelected"></h1>
 				</a>
 			}
 		</nav>
@@ -67,7 +74,7 @@ templ sideBar() {
 	</aside>
 }
 
-templ AppLayout(children ...templ.Component) {
+templ AppLayout(currentPage string, children ...templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -83,10 +90,10 @@ templ AppLayout(children ...templ.Component) {
 		</head>
 		<body>
 			<div class="flex h-screen bg-gray-50">
-				@sideBar()
+				@sideBar(currentPage)
 				<main class="flex-1 flex flex-col overflow-hidden">
 					<header class="bg-white border-b border-gray-200 px-6 py-4">
-						<h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+						<h1 class="text-2xl font-bold text-gray-900">{ sideBarItemsData[currentPage].Label }</h1>
 					</header>
 					<div class="flex-1 overflow-y-auto p-6">
 						for _, child := range children {
