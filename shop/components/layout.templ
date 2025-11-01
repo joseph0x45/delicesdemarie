@@ -22,6 +22,14 @@ templ Layout(children ...templ.Component) {
     h3 {
       font-family: "Playfair Display", serif;
     }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      scrollbar-width: none;
+    }
   </style>
 		</head>
 		<body>

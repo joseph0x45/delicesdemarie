@@ -33,10 +33,10 @@ templ footer() {
 		<div class="container mx-auto px-6">
 			<div class="text-center">
 				<p class="text-stone-300">
-					&copy; 2024 Délices d'Épices. Tous droits réservés.
+					&copy; 2025 Les Délices de Marie. Tous droits réservés.
 				</p>
 				<p class="text-stone-400 text-sm mt-2">
-					Épices de qualité premium depuis 1995
+					Épices naturels et de qualité depuis 1995
 				</p>
 			</div>
 		</div>
@@ -112,9 +112,9 @@ templ cartModal(empty bool) {
 	<div
 		x-show="cart_toggled"
 		id="cart-modal"
-		class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+		class="fixed inset-0 backdrop-blur-sm bg-black/15 z-50 flex items-center justify-center p-4"
 	>
-		<div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+		<div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto no-scrollbar">
 			<div class="sticky top-0 bg-white border-b border-stone-200 p-6 flex justify-between items-center">
 				<h2 class="text-2xl font-bold text-stone-800">Mon Panier</h2>
 				<button @click="toggleCart()" class="p-2 hover:bg-stone-100 rounded-lg transition">
@@ -124,12 +124,9 @@ templ cartModal(empty bool) {
 				</button>
 			</div>
 			<div x-show="cart_toggled" id="cart-items" class="p-6">
-				@cartItem()
-				@cartItem()
-				@cartItem()
-				@cartItem()
-				@cartItem()
-				@cartItem()
+				for _ = range 4 {
+					@cartItem()
+				}
 				<div class="space-y-4">
 					<div class="mt-6 pt-6 border-t border-stone-200">
 						<div class="flex justify-between items-center text-xl font-bold">
@@ -249,7 +246,7 @@ templ header() {
 							d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
 						></path>
 					</svg>
-					<h1 class="text-2xl font-bold text-stone-800">Délices de Marie</h1>
+					<h1 class="text-2xl font-bold text-stone-800">Les Délices de Marie</h1>
 				</div>
 				<div class="flex items-center space-x-8">
 					<div class="hidden md:flex space-x-8">
@@ -292,7 +289,7 @@ templ main(products []models.Product) {
 				@productsList()
 			</div>
 		</section>
-		@contact()
+    @Contacts()
 		@footer()
 		@cartModal(true)
 	</body>
@@ -325,7 +322,7 @@ templ contact() {
 										d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
 									></path>
 								</svg>
-								<span class="text-stone-600">contact@delices-epices.fr</span>
+								<span class="text-stone-600">contact@delicesdemarie.org</span>
 							</div>
 							<div class="flex items-start space-x-3">
 								<svg
@@ -341,29 +338,7 @@ templ contact() {
 										d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
 									></path>
 								</svg>
-								<span class="text-stone-600">+33 1 23 45 67 89</span>
-							</div>
-							<div class="flex items-start space-x-3">
-								<svg
-									class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-									></path>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-									></path>
-								</svg>
-								<span class="text-stone-600">123 Rue des Épices<br/>75001 Paris, France</span>
+								<span class="text-stone-600">+228 91541906</span>
 							</div>
 						</div>
 					</div>

@@ -1,0 +1,76 @@
+package components
+
+templ ProductDetails() {
+	@Layout(productsList())
+}
+
+templ productDetail() {
+	<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+		<div class="grid lg:grid-cols-2 gap-8">
+			<div class="aspect-square h-full overflow-hidden bg-stone-100">
+				<img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover"/>
+			</div>
+			<div class="p-8">
+				<div class="mb-4">
+					<span class="inline-block px-4 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-medium">
+						product.category
+					</span>
+				</div>
+				<h1 class="text-4xl font-bold text-stone-800 mb-4">product.name </h1>
+				<p class="text-3xl font-bold text-amber-600 mb-6">product.price </p>
+				<div class="space-y-4 mb-8">
+					<div>
+						<h3 class="font-semibold text-stone-800 mb-2">Description</h3>
+						<p class="text-stone-600 leading-relaxed">product.longDescription</p>
+					</div>
+					<div class="grid grid-cols-2 gap-4 pt-4 border-t border-stone-200">
+						<div>
+							<p class="text-sm text-stone-500">Origine</p>
+							<p class="font-medium text-stone-800">product.origin</p>
+						</div>
+						<div>
+							<p class="text-sm text-stone-500">Poids</p>
+							<p class="font-medium text-stone-800">product.weight</p>
+						</div>
+					</div>
+				</div>
+				<div class="flex gap-4">
+					<button
+						onclick="addToCart(${productId})"
+						class="flex-1 bg-amber-600 text-white px-8 py-4 rounded-lg hover:bg-amber-700 transition font-semibold text-lg"
+					>
+						Ajouter au panier
+					</button>
+					<a
+						href="index.html"
+						class="px-8 py-4 flex items-center border-2 border-stone-300 text-stone-700 rounded-lg hover:bg-stone-50 transition font-semibold text-lg"
+					>
+						Retour
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ productDetails() {
+	<section class="py-16">
+		<div class="container mx-auto px-6">
+			<div id="product-details" class="max-w-6xl mx-auto">
+				<!-- Product details will be loaded here -->
+				@productDetail()
+			</div>
+		</div>
+	</section>
+}
+
+templ relatedProducts() {
+	<section class="py-16 bg-stone-100">
+		<div class="container mx-auto px-6">
+			<h2 class="text-3xl font-bold text-center text-stone-800 mb-12">Produits Similaires</h2>
+			<div id="related-products" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+				<!-- Related products will be loaded here -->
+			</div>
+		</div>
+	</section>
+}

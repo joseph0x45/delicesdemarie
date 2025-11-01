@@ -1,0 +1,83 @@
+package components
+
+import "shop/components/icons"
+
+type contactStruct struct {
+	Value string
+	Icon  func() templ.Component
+}
+
+type hourStruct struct {
+	Label string
+	Value string
+}
+
+var contacts = []contactStruct{
+	{
+		Value: "contact@delicesdemarie.org",
+		Icon:  icons.Mail,
+	},
+	{
+		Value: "+228 91541906",
+		Icon:  icons.Phone,
+	},
+	{
+		Value: "+228 91541906",
+		Icon:  icons.Whatsapp,
+	},
+}
+
+var hours = []hourStruct{
+	{
+		Label: "Lundi - Vendredi",
+		Value: "9h - 18h",
+	},
+	{
+		Label: "Samedi",
+		Value: "10h - 18h",
+	},
+	{
+		Label: "Dimanche",
+		Value: "Fermé",
+	},
+}
+
+templ Contacts() {
+	<section id="contact" class="bg-stone-100 py-16">
+		<div class="container mx-auto px-6">
+			<div class="max-w-4xl mx-auto">
+				<h2 class="text-4xl font-bold text-center text-stone-800 mb-12">
+					Contactez-nous
+				</h2>
+				<div class="grid md:grid-cols-2 gap-8">
+					<div class="bg-white p-8 rounded-lg shadow-sm">
+						<h3 class="text-xl font-semibold mb-4 text-stone-800">
+							Informations
+						</h3>
+						<div class="space-y-4">
+							for _, contact := range contacts {
+								<div class="flex items-start space-x-3">
+									@contact.Icon()
+									<span class="text-stone-600">{ contact.Value }</span>
+								</div>
+							}
+						</div>
+					</div>
+					<div class="bg-white p-8 rounded-lg shadow-sm">
+						<h3 class="text-xl font-semibold mb-4 text-stone-800">
+							Horaires
+						</h3>
+						<div class="space-y-3 text-stone-600">
+							for _, hour := range hours {
+								<div class="flex justify-between">
+									<span>{ hour.Label }</span>
+									<span class="font-medium">{ hour.Value }</span>
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+}

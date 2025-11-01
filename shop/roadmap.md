@@ -1,0 +1,8 @@
+- [ ] Products page
+- [ ] Cart
+- [ ] Add/Remove from cart
+- [ ] Validate order
+- [ ] Product details page
+- [ ] Filter products by category
+- [ ] Filter products by size (variants)
+- [ ] Products in stock or not
