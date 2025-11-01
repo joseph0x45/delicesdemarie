@@ -17,7 +17,7 @@ func NewMainHandler(conn *db.Conn) *MainHandler {
 }
 
 func (h *MainHandler) RenderDashboard(w http.ResponseWriter, r *http.Request) {
-	if err := components.Index().Render(context.Background(), w); err != nil {
+	if err := components.Dashboard().Render(context.Background(), w); err != nil {
 		log.Println("[ERROR]: Failed to render dashboard", err.Error())
     http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

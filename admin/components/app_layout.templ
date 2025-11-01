@@ -1,0 +1,100 @@
+package components
+
+import "admin/components/icons"
+
+type sideBarItem struct {
+	Label string
+	Link  string
+	Icon  func() templ.Component
+}
+
+var sideBarItems = []sideBarItem{
+	{
+		Label: "Products",
+		Link:  "/products",
+		Icon:  icons.ProductIcon,
+	},
+	{
+		Label: "Orders",
+		Link:  "/orders",
+		Icon:  icons.OrderIcon,
+	},
+	{
+		Label: "Profile",
+		Link:  "/profile",
+		Icon:  icons.ProfileIcon,
+	},
+}
+
+templ sideBarFooter() {
+	<div class="p-4 border-t border-gray-200">
+		<form method="POST" action="/admin/logout">
+			<button
+				type="submit"
+				class="flex items-center gap-3 w-full px-4 py-3 text-red-600 rounded-lg hover:bg-red-50 transition"
+			>
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+					></path>
+				</svg>
+				<span class="font-medium">Logout</span>
+			</button>
+		</form>
+	</div>
+}
+
+templ sideBar() {
+	<aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+		<div class="px-6 py-4 border-b border-gray-200">
+			<h2 class="text-2xl font-bold text-gray-900">Admin Panel</h2>
+		</div>
+		<nav class="flex-1 p-4 space-y-1">
+			for _, sideBarItem := range sideBarItems {
+				<a
+					href={ sideBarItem.Link }
+					class="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition"
+				>
+					@sideBarItem.Icon()
+					<span class="font-medium">{ sideBarItem.Label }</span>
+				</a>
+			}
+		</nav>
+		@sideBarFooter()
+	</aside>
+}
+
+templ AppLayout(children ...templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>Delices de Marie - Admin Panel</title>
+			<link href="/static/styles.css" rel="stylesheet"/>
+			<link href="/static/toastify.css" rel="stylesheet"/>
+			<script defer src="/static/alpine.js"></script>
+			<script src="/static/script.js"></script>
+			<script src="/static/toastify.js"></script>
+			<script src="/static/utils.js"></script>
+		</head>
+		<body>
+			<div class="flex h-screen bg-gray-50">
+				@sideBar()
+				<main class="flex-1 flex flex-col overflow-hidden">
+					<header class="bg-white border-b border-gray-200 px-6 py-4">
+						<h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+					</header>
+					<div class="flex-1 overflow-y-auto p-6">
+						for _, child := range children {
+							@child
+						}
+					</div>
+				</main>
+			</div>
+		</body>
+	</html>
+}
