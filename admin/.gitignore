@@ -1,0 +1,5 @@
+admin
+*_templ.go
+admin.db
+static/alpine.js
+static/styles.css
